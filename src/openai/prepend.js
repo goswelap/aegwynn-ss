@@ -7,11 +7,8 @@ function constructConversation(conversation) {
 
   const instructions = data.getInstructions();
   const agendaData = data.getAgendaData();
-  console.log(new Date().toISOString());
-  console.log("Instructions:", instructions);
-  console.log("Agenda data:", agendaData);
+
   chatlog.push(...instructions, ...agendaData);
-  console.log("\n\n\n\n\n\n");
 
   const maxLength = Math.max(userMessages.length, assistantMessages.length);
   for (let i = 0; i < maxLength; i++) {
@@ -22,9 +19,7 @@ function constructConversation(conversation) {
       chatlog.push({ role: 'assistant', content: assistantMessages[i] });
     }
   }
-  console.log(new Date().toISOString());
-  console.log("Chatlog:", chatlog);
-  console.log("\n\n\n\n\n\n");
+
   return chatlog;
 }
 

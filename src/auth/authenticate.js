@@ -1,65 +1,75 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const dotenv = require('dotenv').config()
 
-import { firebaseInit } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-SERVICE.js'
+const { initializeApp } = require('firebase/app');
+const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = require('firebase/auth');
+const { getFirestore } = require('firebase/firestore');
+
+
 
 // const FIREBASE_API_KEY = process.env.firebaseAPIKey;
 const firebaseConfig = {
   apiKey: process.env.firebaseAPIKey,
-  // authDomain: "chatbot-6f0d9.firebaseapp.com",
-  // projectId: "chatbot-6f0d9",
+  authDomain: "aegwynn-c7092.firebaseapp.com",
+  projectId: "aegwynn-c7092",
   // storageBucket: "chatbot-6f0d9.appspot.com",
   // messagingSenderId: "1072161410022",
   // appId: "1:1072161410022:web:8b0f7a4b4f3b4c8d5f8c3d"
+  databaseURL: "https://aegwynn-c7092-default-rtdb.firebaseio.com/"
 };
-const app = firebaseInit(firebaseConfig);
-
-router.post('/authenticate', async (req, res) => {
-
-});
-
-router.post('/login', async (req, res) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, req.body.email, req.body.password);
-    // User logged in
-    res.status(200).send(userCredential);
-  } catch (error) {
-    // Error logging in
-    res.status(400).send(error);
-  }
-});
-
-module.exports = {
-  router: router,
-};
-
-
-
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+// const db = getFirestore(app);
 
 
 router.post('/signup', async (req, res) => {
   try {
-    const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`, {
-      email: req.body.email,
-      password: req.body.password,
-      returnSecureToken: true
-    });
-    res.status(200).send(response.data);
+    const userCredential = await createUserWithEmailAndPassword(auth, req.body.email, req.body.password);
+    // User signed up
+    res.status(200).send(userCredential);
   } catch (error) {
-    res.status(400).send(error.response.data);
+    // Error signing up
+    res.status(400).send(error);
   }
 });
 
 router.post('/login', async (req, res) => {
+  console.log(req.body);
   try {
-    const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`, {
-      email: req.body.email,
-      password: req.body.password,
-      returnSecureToken: true
-    });
-    res.status(200).send(response.data);
+    const userCredential = await signInWithEmailAndPassword(auth, req.body.email, req.body.password);
+    // console.log(userCredential);
+    const response = await formatResponse(userCredential);
+
+    // User logged in
+    res.status(200).send(response);
   } catch (error) {
-    res.status(400).send(error.response.data);
+    // Error logging in
+    console.error("Login Error:", error);
+    res.status(400).send(error);
   }
 });
+
+async function formatResponse(userCredential) {
+  try {
+    const idToken = await userCredential.user.getIdToken();
+
+    return {
+      email: userCredential.user.email,
+      idToken: idToken,
+      refreshToken: userCredential.user.refreshToken,
+      expiresIn: "3600",
+      localId: userCredential.user.uid,
+      registered: true
+    };
+  } catch (error) {
+    console.error("Error formatting response:", error);
+    throw error;
+  }
+}
+
+
+module.exports = {
+  router: router,
+};
