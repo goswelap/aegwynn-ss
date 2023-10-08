@@ -1,0 +1,19 @@
+sudo systemctl restart httpd
+sudo systemctl restart apache2
+node server.js
+
+sudo systemctl status apache2
+
+node server.js
+pm2 start server.js
+
+pm2 restart server.js
+pm2 reload server.js
+pm2 stop server.js
+pm2 delete server.js
+========================================================================================================================
+sudo systemctl restart apache2
+sudo systemctl status apache2
+
+pm2 start server.js
+pm2 stop server.js
