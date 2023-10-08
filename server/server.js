@@ -3,7 +3,8 @@ const app = express();
 
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const promptRouter = require('./prompt');
+const promptRouter = require('../openai/prompt').router;
+const dataRouter = require('../openai/data').router;
 
 const allowedOrigins = ['http://eranei.com', 'http://localhost:4200'];
 
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/', promptRouter);
+app.use('/', dataRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {
