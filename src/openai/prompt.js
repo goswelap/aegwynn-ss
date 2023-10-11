@@ -1,28 +1,31 @@
 const express = require('express');
 const router = express.Router();
 
-const OpenAI = require('openai');
 const dotenv = require('dotenv').config()
 const OPENAI_API_KEY = process.env.openaiAPIKey;
+
+const OpenAI = require('openai');
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 const prepend = require('./prepend');
 
 router.post('/openai-prompt', async (req, res) => {
   const conversation = req.body.conversation;
-  const conversationHistory = prepend.constructConversation(conversation);
+  const history = prepend.constructConversation(conversation);
+  const timestamp = new Date().toISOString();
+  history.unshift({ role: 'system', content: "Current Date and Time: ", timestamp });
 
   if (!conversation) {
     return res.status(400).json({ error: 'Message is required' });
   }
 
-  if (!conversationHistory) {
+  if (!history) {
     return res.status(400).json({ error: 'Conversation history is required' });
   }
 
   try {
     const openaiResponse = await openai.chat.completions.create({
-      messages: conversationHistory,
+      messages: history,
       model: 'gpt-3.5-turbo',
     });
 
@@ -33,7 +36,6 @@ router.post('/openai-prompt', async (req, res) => {
   }
 });
 
-// module.exports = router;
 module.exports = {
-  router : router,
+  router: router,
 };

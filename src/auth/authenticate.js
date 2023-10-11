@@ -72,4 +72,5 @@ async function formatResponse(userCredential) {
 
 module.exports = {
   router: router,
+  fb: app,
 };
