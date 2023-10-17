@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const promptRouter = require('../openai/prompt').router;
 const dataRouter = require('../openai/data').router;
 const authRouter = require('../auth/authenticate').router;
+const fetchRouter = require('../db/fetch').router;
 
 const allowedOrigins = ['http://eranei.com', 'http://localhost:4200'];
 
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
 app.use('/', promptRouter);
 app.use('/', dataRouter);
 app.use('/', authRouter);
+app.use('/', fetchRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {
