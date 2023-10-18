@@ -13,7 +13,7 @@ router.post('/openai-prompt', async (req, res) => {
   const conversation = req.body.conversation;
   const history = prepend.constructConversation(conversation);
   const timestamp = new Date().toISOString();
-  history.unshift({ role: 'system', content: "Current Date and Time: ", timestamp });
+  history.unshift({ role: 'system', content: `Current Date and Time: ${timestamp}` });
 
   if (!conversation) {
     return res.status(400).json({ error: 'Message is required' });
@@ -24,10 +24,12 @@ router.post('/openai-prompt', async (req, res) => {
   }
 
   try {
+
     const openaiResponse = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
       messages: history,
-      model: 'gpt-3.5-turbo',
-    });
+    }
+    );
 
     const openaiMessage = openaiResponse.choices[0].message.content;
     res.json({ response: openaiMessage });
