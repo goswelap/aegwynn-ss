@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-
-const fb = require('../auth/authenticate');
-const URL = fb.fb._options.databaseURL;
+// const URL = fb.fb._options.databaseURL;
+const URL = "https://aegwynn-c7092-default-rtdb.firebaseio.com";
 
 router.post('/store-courses/:userId', async (req, res) => {
   const courses = req.body;
@@ -83,6 +82,6 @@ router.get('/fetch-completed-items/:userId', async (req, res) => {
 
 module.exports = {
   router: router,
-  fb: fb,
+  // fb: fb,
   url: URL,
 };
