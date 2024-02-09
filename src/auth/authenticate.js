@@ -33,7 +33,6 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   console.log(req.body);
   try {
-    console.log('\n\n FIREBASE_API_KEY: ', FIREBASE_API_KEY, '\n\n');
     const userCredential = await signInWithEmailAndPassword(auth, req.body.email, req.body.password);
     console.log(userCredential);
     const response = await formatResponse(userCredential);
